@@ -15,7 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use frame_support::storage;
 use log::info;
+use polkadot_primitives::BlakeTwo256;
 use rand::prelude::*;
 use sc_cli::{Error, Result};
 use sc_client_api::{Backend as ClientBackend, StorageProvider, UsageProvider};
@@ -58,6 +60,7 @@ impl StorageCmd {
 		// Read using the same TrieBackend and recorder for up to `batch_size` keys.
 		// This would allow us to measure the amortized cost of reading a key.
 		let recorder = (!self.params.disable_pov_recorder).then(|| Default::default());
+		let mut recorder_clone = recorder.clone();
 		let mut state = client
 			.state_at(best_hash)
 			.map_err(|_err| Error::Input("State not found".into()))?;
@@ -66,7 +69,7 @@ impl StorageCmd {
 			.with_optional_recorder(recorder)
 			.build();
 		let mut read_in_batch = 0;
-
+		let mut read_keys = Vec::new();
 		for key in keys.as_slice() {
 			match (self.params.include_child_trees, self.is_child_key(key.clone().0)) {
 				(true, Some(info)) => {
@@ -78,22 +81,71 @@ impl StorageCmd {
 				_ => {
 					// regular key
 					let start = Instant::now();
-
+					read_keys.push(key.clone());
 					let v = backend
 						.storage(key.0.as_ref())
 						.expect("Checked above to exist")
 						.ok_or("Value unexpectedly empty")?;
-					record.append(v.len(), start.elapsed())?;
+					// record.append(v.len(), start.elapsed())?;
 				},
 			}
 			read_in_batch += 1;
 			if read_in_batch >= self.params.batch_size {
+				// Arguments to be passed to  validate_block
+				let root = backend.root();
+				let pov = recorder_clone.map(|r| r.drain_storage_proof());
+				info!(
+					"POV: len {:?} {:?}",
+					pov.as_ref().map(|p| p.len()),
+					pov.clone().map(|p| p.encoded_compact_size::<HashingFor<B>>(*root))
+				);
+
+				// Stuff to execute in validate block.
+				if let Some(storage_proof) = pov {
+					let compact = storage_proof.into_compact_proof::<HashingFor<B>>(*root).unwrap();
+					let db = match compact.to_memory_db::<HashingFor<B>>(Some(root)) {
+						Ok((db, _)) => db,
+						Err(_) => panic!("Compact proof decoding failure."),
+					};
+
+					let mut recorder =
+					cumulus_pallet_parachain_system::validate_block::trie_recorder::SizeOnlyRecorderProvider::<HashingFor<B>>::new();
+					let cache_provider =
+						cumulus_pallet_parachain_system::validate_block::trie_cache::CacheProvider::<
+							HashingFor<B>,
+						>::new();
+					// We use the storage root of the `parent_head` to ensure that it is the correct
+					// root. This is already being done above while creating the in-memory db,
+					// but let's be paranoid!!
+					let in_memory_backend = sp_state_machine::TrieBackendBuilder::new_with_cache(
+						db,
+						*root,
+						cache_provider,
+					)
+					.with_recorder(recorder.clone())
+					.build();
+
+					for test_key in &read_keys {
+						let start = Instant::now();
+
+						let v = in_memory_backend
+							.storage(test_key.0.as_ref())
+							.expect("Checked above to exist")
+							.ok_or("Value unexpectedly empty")?;
+						record.append(v.len(), start.elapsed())?;
+					}
+
+					read_keys.clear();
+				}
+
 				// Using a new recorder for every read vs using the same for the entire batch
 				// produces significant different results. Since in the real use case we use a
 				// single recorder per block, simulate the same behavior by creating a new
 				// recorder every batch size, so that the amortized cost of reading a key is
 				// measured in conditions closer to the real world.
 				let recorder = (!self.params.disable_pov_recorder).then(|| Default::default());
+				recorder_clone = recorder.clone();
+				info!("recorder {:} clone {:}", recorder.is_some(), recorder_clone.is_some());
 				state = client
 					.state_at(best_hash)
 					.map_err(|_err| Error::Input("State not found".to_string()))?;
@@ -101,6 +153,7 @@ impl StorageCmd {
 				backend = sp_state_machine::TrieBackendBuilder::wrap(&as_trie_backend)
 					.with_optional_recorder(recorder)
 					.build();
+
 				read_in_batch = 0;
 			}
 		}
@@ -115,7 +168,7 @@ impl StorageCmd {
 					.child_storage(info, key.0.as_ref())
 					.expect("Checked above to exist")
 					.ok_or("Value unexpectedly empty")?;
-				record.append(v.len(), start.elapsed())?;
+				// record.append(v.len(), start.elapsed())?;
 
 				read_in_batch += 1;
 				if read_in_batch >= self.params.batch_size {

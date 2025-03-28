@@ -22,13 +22,11 @@ pub mod implementation;
 #[cfg(test)]
 mod tests;
 
-#[cfg(not(feature = "std"))]
 #[doc(hidden)]
-mod trie_cache;
+pub mod trie_cache;
 
-#[cfg(any(test, not(feature = "std")))]
 #[doc(hidden)]
-mod trie_recorder;
+pub mod trie_recorder;
 
 #[cfg(not(feature = "std"))]
 #[doc(hidden)]

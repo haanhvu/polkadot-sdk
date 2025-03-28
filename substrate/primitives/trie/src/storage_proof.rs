@@ -151,6 +151,11 @@ impl StorageProof {
 	/// Return `None` on error.
 	pub fn encoded_compact_size<H: Hasher>(self, root: H::Out) -> Option<usize> {
 		let compact_proof = self.into_compact_proof::<H>(root);
+		#[cfg(feature = "std")]
+		if let Err(err) = &compact_proof {
+			println!("Error while encoding compact proof: {:?}", err);
+			return None;
+		}
 		compact_proof.ok().map(|p| p.encoded_size())
 	}
 }
