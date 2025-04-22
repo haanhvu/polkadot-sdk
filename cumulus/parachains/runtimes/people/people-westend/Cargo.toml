@@ -40,6 +40,8 @@ pallet-timestamp = { workspace = true }
 pallet-transaction-payment = { workspace = true }
 pallet-transaction-payment-rpc-runtime-api = { workspace = true }
 pallet-utility = { workspace = true }
+pallet-bridge-grandpa = { workspace = true }
+pallet-bridge-messages = { workspace = true }
 sp-api = { workspace = true }
 sp-block-builder = { workspace = true }
 sp-consensus-aura = { workspace = true }
@@ -79,6 +81,12 @@ pallet-collator-selection = { workspace = true }
 parachain-info = { workspace = true }
 parachains-common = { workspace = true }
 testnet-parachains-constants = { features = ["westend"], workspace = true }
+
+# Bridges
+bp-messages = { workspace = true }
+bp-polkadot-bulletin = { workspace = true }
+bp-header-chain = { workspace = true }
+
 
 [dev-dependencies]
 parachains-runtimes-test-utils = { workspace = true, default-features = true }
