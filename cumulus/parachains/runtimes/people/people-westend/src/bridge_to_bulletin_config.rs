@@ -107,11 +107,11 @@ pub type OnBridgeHubWestendRefundWestendBulletinMessages = BridgeRelayersTransac
 bp_runtime::generate_static_str_provider!(OnBridgeHubWestendRefundWestendBulletinMessages);
 
 /// Add XCM messages support for BridgeHubWestend to support Westend->Westend Bulletin XCM messages.
-pub type WithWestendBulletinMessagesInstance = pallet_bridge_messages::Instance4;
+pub type WithWestendBulletinMessagesInstance = pallet_bridge_messages::Instance1;
 impl pallet_bridge_messages::Config<WithWestendBulletinMessagesInstance> for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type WeightInfo =
-		weights::pallet_bridge_messages_westend_to_westend_bulletin::WeightInfo<Runtime>;
+		();
 
 	type ThisChain = bp_bridge_hub_westend::BridgeHubWestend;
 	type BridgedChain = bp_polkadot_bulletin::PolkadotBulletin;
@@ -129,7 +129,7 @@ impl pallet_bridge_messages::Config<WithWestendBulletinMessagesInstance> for Run
 }
 
 /// Add support for the export and dispatch of XCM programs.
-pub type XcmOverPolkadotBulletinInstance = pallet_xcm_bridge_hub::Instance2;
+pub type XcmOverPolkadotBulletinInstance = pallet_xcm_bridge_hub::Instance1;
 impl pallet_xcm_bridge_hub::Config<XcmOverPolkadotBulletinInstance> for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 
@@ -222,7 +222,7 @@ mod tests {
 		>(FEE_BOOST_PER_MESSAGE);
 
 		let expected: InteriorLocation = PalletInstance(
-			bp_bridge_hub_westend::WITH_BRIDGE_ROCOCO_TO_BULLETIN_MESSAGES_PALLET_INDEX,
+			bp_bridge_hub_westend::WITH_BRIDGE_WESTEND_TO_BULLETIN_MESSAGES_PALLET_INDEX,
 		)
 		.into();
 
@@ -244,13 +244,13 @@ where
 {
 	use pallet_xcm_bridge_hub::{Bridge, BridgeId, BridgeState};
 	use sp_runtime::traits::Zero;
-	use xcm::{latest::ROCOCO_GENESIS_HASH, VersionedInteriorLocation};
+	use xcm::{latest::WESTEND_GENESIS_HASH, VersionedInteriorLocation};
 
 	// insert bridge metadata
 	let lane_id = with;
 	let sibling_parachain = Location::new(1, [Parachain(sibling_para_id)]);
 	let universal_source =
-		[GlobalConsensus(ByGenesis(ROCOCO_GENESIS_HASH)), Parachain(sibling_para_id)].into();
+		[GlobalConsensus(ByGenesis(WESTEND_GENESIS_HASH)), Parachain(sibling_para_id)].into();
 	let universal_destination =
 		[GlobalConsensus(WestendBulletinGlobalConsensusNetwork::get())].into();
 	let bridge_id = BridgeId::new(&universal_source, &universal_destination);

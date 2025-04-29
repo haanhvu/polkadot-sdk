@@ -40,29 +40,6 @@ parameter_types! {
 	pub storage DeliveryRewardInBalance: u64 = 1_000_000;
 }
 
-/// Add GRANDPA bridge pallet to track Westend relay chain.
-pub type BridgeGrandpaWestendInstance = pallet_bridge_grandpa::Instance3;
-impl pallet_bridge_grandpa::Config<BridgeGrandpaWestendInstance> for Runtime {
-	type RuntimeEvent = RuntimeEvent;
-	type BridgedChain = bp_westend::Westend;
-	type MaxFreeHeadersPerBlock = ConstU32<4>;
-	type FreeHeadersInterval = ConstU32<5>;
-	type HeadersToKeep = RelayChainHeadersToKeep;
-	type WeightInfo = weights::pallet_bridge_grandpa::WeightInfo<Runtime>;
-}
-
-/// Add parachain bridge pallet to track Westend BridgeHub parachain
-pub type BridgeParachainWestendInstance = pallet_bridge_parachains::Instance3;
-impl pallet_bridge_parachains::Config<BridgeParachainWestendInstance> for Runtime {
-	type RuntimeEvent = RuntimeEvent;
-	type WeightInfo = weights::pallet_bridge_parachains::WeightInfo<Runtime>;
-	type BridgesGrandpaPalletInstance = BridgeGrandpaWestendInstance;
-	type ParasPalletName = WestendBridgeParachainPalletName;
-	type ParaStoredHeaderDataBuilder =
-		SingleParaStoredHeaderDataBuilder<bp_bridge_hub_westend::BridgeHubWestend>;
-	type HeadsToKeep = ParachainHeadsToKeep;
-	type MaxParaHeadDataSize = MaxWestendParaHeadDataSize;
-}
 
 /// Allows collect and claim rewards for relayers
 pub type RelayersForLegacyLaneIdsMessagesInstance = ();
@@ -85,11 +62,11 @@ impl pallet_bridge_relayers::Config<RelayersForLegacyLaneIdsMessagesInstance> fo
 		RelayerStakeLease,
 	>;
 	type Balance = Balance;
-	type WeightInfo = weights::pallet_bridge_relayers_legacy::WeightInfo<Runtime>;
+	type WeightInfo = ();
 }
 
 /// Allows collect and claim rewards for relayers
-pub type RelayersForPermissionlessLanesInstance = pallet_bridge_relayers::Instance2;
+pub type RelayersForPermissionlessLanesInstance = pallet_bridge_relayers::Instance1;
 impl pallet_bridge_relayers::Config<RelayersForPermissionlessLanesInstance> for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type RewardBalance = Balance;
@@ -109,12 +86,12 @@ impl pallet_bridge_relayers::Config<RelayersForPermissionlessLanesInstance> for 
 		RelayerStakeLease,
 	>;
 	type Balance = Balance;
-	type WeightInfo = weights::pallet_bridge_relayers_permissionless_lanes::WeightInfo<Runtime>;
+	type WeightInfo = ();
 }
 
-/// Add GRANDPA bridge pallet to track Rococo Bulletin chain.
-pub type BridgeGrandpaRococoBulletinInstance = pallet_bridge_grandpa::Instance4;
-impl pallet_bridge_grandpa::Config<BridgeGrandpaRococoBulletinInstance> for Runtime {
+/// Add GRANDPA bridge pallet to track Westend Bulletin chain.
+pub type BridgeGrandpaWestendBulletinInstance = pallet_bridge_grandpa::Instance1;
+impl pallet_bridge_grandpa::Config<BridgeGrandpaWestendBulletinInstance> for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type BridgedChain = bp_polkadot_bulletin::PolkadotBulletin;
 	type MaxFreeHeadersPerBlock = ConstU32<4>;
@@ -128,5 +105,5 @@ impl pallet_bridge_grandpa::Config<BridgeGrandpaRococoBulletinInstance> for Runt
 	//
 	// In practice, however, GRANDPA pallet works the same way for all bridged chains, so
 	// weights are also the same for both bridges.
-	type WeightInfo = weights::pallet_bridge_grandpa::WeightInfo<Runtime>;
+	type WeightInfo = ();
 }
