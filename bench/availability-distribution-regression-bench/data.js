@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1746025542625,
+  "lastUpdate": 1746041783497,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "availability-distribution-regression-bench": [
@@ -66769,6 +66769,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "bitfield-distribution",
             "value": 0.022288876059999994,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pgherveou@gmail.com",
+            "name": "PG Herveou",
+            "username": "pgherveou"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "216b81ab6b615a35c6b0d9ab8d533d1c77c9ae56",
+          "message": "Update tests-evm.yml (#8387)\n\nUpdate the sha for the evm-test suite\n\n---------\n\nCo-authored-by: cmd[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "timestamp": "2025-04-30T18:37:37Z",
+          "tree_id": "2725c6183c9674a2f5e49238d0749f5d692b8d08",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/216b81ab6b615a35c6b0d9ab8d533d1c77c9ae56"
+        },
+        "date": 1746041765937,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Received from peers",
+            "value": 433.3333333333332,
+            "unit": "KiB"
+          },
+          {
+            "name": "Sent to peers",
+            "value": 18481.666666666653,
+            "unit": "KiB"
+          },
+          {
+            "name": "availability-distribution",
+            "value": 0.012656472793333335,
+            "unit": "seconds"
+          },
+          {
+            "name": "availability-store",
+            "value": 0.15554766163333328,
+            "unit": "seconds"
+          },
+          {
+            "name": "test-environment",
+            "value": 0.008592346800000077,
+            "unit": "seconds"
+          },
+          {
+            "name": "bitfield-distribution",
+            "value": 0.02224795828666666,
             "unit": "seconds"
           }
         ]
