@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1746025594323,
+  "lastUpdate": 1746041835444,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "statement-distribution-regression-bench": [
@@ -44347,6 +44347,50 @@ window.BENCHMARK_DATA = {
           {
             "name": "test-environment",
             "value": 0.04590284179199994,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pgherveou@gmail.com",
+            "name": "PG Herveou",
+            "username": "pgherveou"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "216b81ab6b615a35c6b0d9ab8d533d1c77c9ae56",
+          "message": "Update tests-evm.yml (#8387)\n\nUpdate the sha for the evm-test suite\n\n---------\n\nCo-authored-by: cmd[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "timestamp": "2025-04-30T18:37:37Z",
+          "tree_id": "2725c6183c9674a2f5e49238d0749f5d692b8d08",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/216b81ab6b615a35c6b0d9ab8d533d1c77c9ae56"
+        },
+        "date": 1746041818189,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Received from peers",
+            "value": 106.39999999999996,
+            "unit": "KiB"
+          },
+          {
+            "name": "Sent to peers",
+            "value": 127.97199999999995,
+            "unit": "KiB"
+          },
+          {
+            "name": "test-environment",
+            "value": 0.04534547860999993,
+            "unit": "seconds"
+          },
+          {
+            "name": "statement-distribution",
+            "value": 0.033811949812,
             "unit": "seconds"
           }
         ]
