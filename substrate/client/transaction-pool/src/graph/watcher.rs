@@ -106,8 +106,8 @@ impl<H: Clone, BH: Clone> Sender<H, BH> {
 	}
 
 	/// Extrinsic has been marked as invalid by the block builder.
-	pub fn invalid(&mut self, err: String) {
-		self.send(TransactionStatus::Invalid(err));
+	pub fn invalid(&mut self, reason: TransactionValidityError) {
+		self.send(TransactionStatus::Invalid(reason));
 		// we mark as finalized as there are no more notifications
 		self.is_finalized = true;
 	}

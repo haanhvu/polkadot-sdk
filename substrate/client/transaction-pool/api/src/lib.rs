@@ -154,7 +154,7 @@ pub enum TransactionStatus<Hash, BlockHash> {
 	/// Transaction has been dropped from the pool because of the limit.
 	Dropped,
 	/// Transaction is no longer valid in the current state.
-	Invalid(String),
+	Invalid(TransactionValidityError),
 }
 
 impl<Hash, BlockHash> TransactionStatus<Hash, BlockHash> {

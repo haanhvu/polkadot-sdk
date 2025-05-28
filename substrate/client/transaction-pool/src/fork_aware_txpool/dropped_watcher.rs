@@ -64,7 +64,7 @@ impl<Hash> DroppedTransaction<Hash> {
 	}
 
 	/// Creates a new instance with reason set to `DroppedReason::Invalid`.
-	pub fn new_invalid(tx_hash: Hash, reason: String) -> Self {
+	pub fn new_invalid(tx_hash: Hash, reason: TransactionValidityError) -> Self {
 		Self { reason: DroppedReason::Invalid(reason), tx_hash }
 	}
 }
@@ -77,7 +77,7 @@ pub enum DroppedReason<Hash> {
 	/// Transaction was dropped because of internal pool limits being enforced.
 	LimitsEnforced,
 	/// Transaction was dropped because of being invalid.
-	Invalid(String),
+	Invalid(TransactionValidityError),
 }
 
 /// Dropped-logic related event from the single view.

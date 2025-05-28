@@ -32,6 +32,7 @@ use crate::{
 	},
 	ReadyIteratorFor, LOG_TARGET,
 };
+use indexmap::IndexMap;
 use itertools::Itertools;
 use parking_lot::RwLock;
 use sc_transaction_pool_api::{
@@ -702,7 +703,8 @@ where
 		invalid_tx_errors: TxInvalidityReportMap<ExtrinsicHash<ChainApi>>,
 	) -> Vec<TransactionFor<ChainApi>> {
 		let mut remove_from_view = vec![];
-		let mut remove_from_pool = vec![];
+		let mut remove_from_pool_with_reasons = IndexMap::new();
+		//let mut remove_from_pool = vec![];
 
 		invalid_tx_errors.into_iter().for_each(|(hash, e)| match e {
 			Some(TransactionValidityError::Invalid(
@@ -711,7 +713,8 @@ where
 				remove_from_view.push(hash);
 			},
 			_ => {
-				remove_from_pool.push(hash);
+				remove_from_pool_with_reasons.insert(hash, e.unwrap());
+				//remove_from_pool.push(hash);
 			},
 		});
 
@@ -723,7 +726,8 @@ where
 		});
 
 		let mut removed = vec![];
-		for tx_hash in &remove_from_pool {
+		for tx_hash in &remove_from_pool_with_reasons.keys() {
+		//for tx_hash in &remove_from_pool {
 			let removed_from_pool = self.remove_transaction_subtree(*tx_hash, |_, _| {});
 			removed_from_pool
 				.iter()
@@ -731,7 +735,7 @@ where
 				.map(|tx| removed.push(tx.clone()));
 		}
 
-		self.listener.transactions_invalidated(&remove_from_pool, "".to_string());
+		self.listener.transactions_invalidated(&remove_from_pool_with_reasons);
 
 		removed
 	}

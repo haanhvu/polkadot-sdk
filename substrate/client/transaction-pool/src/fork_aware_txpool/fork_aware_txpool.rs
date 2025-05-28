@@ -1394,8 +1394,11 @@ where
 		if self.view_store.is_empty() {
 			for result in results {
 				if let Err(tx_hash) = result {
-					let reason: String = format!("{:?}", result);
-					self.view_store.listener.transactions_invalidated(&[tx_hash], reason);
+					let mut remove_from_pool_with_reasons = IndexMap::new();
+					remove_from_pool_with_reasons.insert(tx_hash, TransactionValidityError::Invalid(InvalidTransaction::Custom(result)));
+					self.view_store.listener.transactions_invalidated(&remove_from_pool_with_reasons);
+					//let reason: String = format!("{:?}", result);
+					//self.view_store.listener.transactions_invalidated(&[tx_hash], reason);
 					self.mempool.remove_transactions(&[tx_hash]);
 				}
 			}

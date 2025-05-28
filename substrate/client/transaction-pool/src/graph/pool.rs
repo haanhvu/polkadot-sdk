@@ -1096,7 +1096,7 @@ mod tests {
 			// then
 			let mut stream = futures::executor::block_on_stream(watcher.into_stream());
 			assert_eq!(stream.next(), Some(TransactionStatus::Ready));
-			assert_eq!(stream.next(), Some(TransactionStatus::Invalid("".to_string())));
+			assert_eq!(stream.next(), Some(TransactionStatus::Invalid(TransactionValidityError::Invalid(InvalidTransaction::Custom("Some reason".into())))));
 			assert_eq!(stream.next(), None);
 		}
 

@@ -605,8 +605,14 @@ where
 		let revalidated_invalid_hashes_len = revalidated_invalid_hashes.len();
 		let invalid_hashes_subtrees_len = invalid_hashes_subtrees.len();
 
+		let mut remove_from_pool_with_reasons = IndexMap::new();
+
+		for item in invalid_hashes_subtrees {
+			remove_from_pool_with_reasons.insert(item, TransactionValidityError::Invalid(InvalidTransaction::Custom("Invalid from revalidation".into())));
+		}
+
 		self.listener
-			.transactions_invalidated(&invalid_hashes_subtrees.into_iter().collect::<Vec<_>>(), "".to_string());
+			.transactions_invalidated(&remove_from_pool_with_reasons);
 
 		trace!(
 			target: LOG_TARGET,

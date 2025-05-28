@@ -51,7 +51,7 @@ pub trait EventHandler<C: ChainApi> {
 	fn dropped(&self, _tx: ExtrinsicHash<C>) {}
 
 	/// Called when a transaction is found to be invalid.
-	fn invalid(&self, _tx: ExtrinsicHash<C>, reason: String) {}
+	fn invalid(&self, _tx: ExtrinsicHash<C>, reason: TransactionValidityError) {}
 
 	/// Called when a transaction was pruned from the pool due to its presence in imported block.
 	fn pruned(&self, _tx: ExtrinsicHash<C>, _block_hash: BlockHash<C>, _tx_index: usize) {}
@@ -206,7 +206,7 @@ impl<C: ChainApi, L: EventHandler<C>> EventDispatcher<ExtrinsicHash<C>, C, L> {
 	}
 
 	/// Transaction was removed as invalid.
-	pub fn invalid(&mut self, tx_hash: &ExtrinsicHash<C>, reason: String) {
+	pub fn invalid(&mut self, tx_hash: &ExtrinsicHash<C>, reason: TransactionValidityError) {
 		trace!(
 			target: LOG_TARGET,
 			?tx_hash,

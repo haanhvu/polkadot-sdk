@@ -176,7 +176,7 @@ impl<C: graph::ChainApi> graph::EventHandler<C> for ViewPoolObserver<C> {
 		self.send_to_dropped_stream_sink(tx, TransactionStatus::Usurped(by));
 	}
 
-	fn invalid(&self, tx: ExtrinsicHash<C>, reason: String) {
+	fn invalid(&self, tx: ExtrinsicHash<C>, reason: TransactionValidityError) {
 		self.send_to_dropped_stream_sink(tx, TransactionStatus::Invalid(reason));
 	}
 
