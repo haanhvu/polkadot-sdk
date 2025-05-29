@@ -27,10 +27,14 @@ use crate::{
 	LOG_TARGET,
 };
 use futures::{Future, FutureExt, Stream, StreamExt};
+use indexmap::IndexMap;
 use parking_lot::RwLock;
 use sc_transaction_pool_api::{TransactionStatus, TransactionStatusStream, TxIndex};
 use sc_utils::mpsc;
-use sp_runtime::traits::Block as BlockT;
+use sp_runtime::{
+	traits::Block as BlockT,
+	transaction_validity::TransactionValidityError,
+};
 use std::{
 	collections::{hash_map::Entry, HashMap, HashSet},
 	pin::Pin,
@@ -139,7 +143,7 @@ where
 			TransactionStatusUpdate::Dropped(_, DroppedReason::LimitsEnforced) =>
 				TransactionStatus::Dropped,
 			TransactionStatusUpdate::Dropped(_, DroppedReason::Invalid(reason)) =>
-				TransactionStatus::Invalid(reason),
+				TransactionStatus::Invalid(*reason),
 			TransactionStatusUpdate::FinalityTimeout(_, block_hash) =>
 				TransactionStatus::FinalityTimeout(*block_hash),
 		}
@@ -688,7 +692,7 @@ where
 		log_xt_trace!(target: LOG_TARGET, invalid_hashes, "transactions_invalidated");
 		for tx_hash in invalid_hashes.keys() {
 			if let Err(error) =
-				self.controller.unbounded_send(ControllerCommand::new_invalidated(*tx_hash, invalid_hashes.get(tx_hash)))
+				self.controller.unbounded_send(ControllerCommand::new_invalidated(*tx_hash, invalid_hashes.get(tx_hash).cloned().unwrap_or(TransactionValidityError::Invalid(InvalidTransaction::Call))))
 			{
 				trace!(
 					target: LOG_TARGET,

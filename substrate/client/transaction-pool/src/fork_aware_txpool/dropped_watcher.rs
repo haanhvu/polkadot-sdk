@@ -30,7 +30,10 @@ use crate::{
 use futures::stream::StreamExt;
 use sc_transaction_pool_api::TransactionStatus;
 use sc_utils::mpsc;
-use sp_runtime::traits::Block as BlockT;
+use sp_runtime::{
+	traits::Block as BlockT,
+	transaction_validity::TransactionValidityError,
+};
 use std::{
 	collections::{
 		hash_map::{Entry, OccupiedEntry},

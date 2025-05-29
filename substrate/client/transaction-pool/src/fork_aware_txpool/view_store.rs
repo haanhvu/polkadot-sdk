@@ -726,7 +726,7 @@ where
 		});
 
 		let mut removed = vec![];
-		for tx_hash in &remove_from_pool_with_reasons.keys() {
+		for tx_hash in remove_from_pool_with_reasons.keys() {
 		//for tx_hash in &remove_from_pool {
 			let removed_from_pool = self.remove_transaction_subtree(*tx_hash, |_, _| {});
 			removed_from_pool

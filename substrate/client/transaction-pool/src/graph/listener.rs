@@ -19,6 +19,7 @@
 use std::{collections::HashMap, fmt::Debug, hash};
 
 use linked_hash_map::LinkedHashMap;
+use sp_runtime::transaction_validity::TransactionValidityError;
 use tracing::trace;
 
 use super::{watcher, BlockHash, ChainApi, ExtrinsicHash};
